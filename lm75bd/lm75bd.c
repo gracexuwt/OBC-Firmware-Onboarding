@@ -10,6 +10,8 @@
 /* LM75BD Registers (p.8) */
 #define LM75BD_REG_TEMP 0x00U /*Read only*/
 #define LM75BD_REG_CONF 0x01U  /* Configuration Register (R/W) */
+/* Temperature Conversion Constants */
+#define TEMP_CONST 0.125f
 
 error_code_t lm75bdInit(lm75bd_config_t *config) {
   error_code_t errCode;
@@ -28,7 +30,6 @@ error_code_t lm75bdInit(lm75bd_config_t *config) {
 
 error_code_t readTempLM75BD(uint8_t devAddr, float *temp) {
   error_code_t errCode;
-  float tempConst = 0.125f;
   uint8_t pointerReg = LM75BD_REG_TEMP;
 
   // Send address
@@ -40,9 +41,9 @@ error_code_t readTempLM75BD(uint8_t devAddr, float *temp) {
   // Process register data
   int16_t tempVal = (data[0] << 8) | data[1];
   if((tempVal >> 15) && 0x1) { //Check D10, if 1 then negative
-    *temp = -((~tempVal >> 5) + 1) * tempConst; //invert two's complement
+    *temp = -((~tempVal >> 5) + 1) * TEMP_CONST; //invert two's complement
   } else {
-    *temp = (tempVal >> 5) * tempConst;
+    *temp = (tempVal >> 5) * TEMP_CONST;
   }
 
   return ERR_CODE_SUCCESS;
