@@ -40,11 +40,7 @@ error_code_t readTempLM75BD(uint8_t devAddr, float *temp) {
 
   // Process register data
   int16_t tempVal = (data[0] << 8) | data[1];
-  if((tempVal >> 15) && 0x1) { //Check D10, if 1 then negative
-    *temp = -((~tempVal >> 5) + 1) * TEMP_CONST; //invert two's complement
-  } else {
-    *temp = (tempVal >> 5) * TEMP_CONST;
-  }
+  *temp = (tempVal >> 5) * TEMP_CONST;
 
   return ERR_CODE_SUCCESS;
 }
